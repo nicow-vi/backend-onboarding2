@@ -8,8 +8,9 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class TestController extends BaseController implements TestApi {
-    @Override
-    public ResponseEntity<String> testGet() throws Exception {
-        return new ResponseEntity<>("Hello VI!", HttpStatus.OK);
-    }
+
+  @Override
+  public ResponseEntity<String> testGet() throws Exception {
+    return new ResponseEntity<>("Hello VI!", HttpStatus.OK);
+  }
 }

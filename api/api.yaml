@@ -30,18 +30,18 @@ paths:
         - author
       operationId: getAuthors
       parameters:
-       - name: limit
-         description: number of returned results
-         in: query
-         schema:
-           type: integer
-           default: 10
-       - name: offset
-         description: offset of returned results
-         in: query
-         schema:
-           type: integer
-           default: 0
+        - name: limit
+          description: number of returned results
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          description: offset of returned results
+          in: query
+          schema:
+            type: integer
+            default: 0
       responses:
         200:
           description: operation successful
@@ -56,11 +56,11 @@ paths:
         - author
       operationId: getAuthorById
       parameters:
-       - name: id
-         description: id of author
-         in: path
-         schema:
-           type: integer
+        - name: id
+          description: id of author
+          in: path
+          schema:
+            type: integer
       responses:
         200:
           description: operation successful
