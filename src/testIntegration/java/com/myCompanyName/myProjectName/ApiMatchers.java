@@ -1,4 +1,4 @@
-package com.myCompanyName.myProjectName;
+package com.virtualidentity.backendonboarding;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
