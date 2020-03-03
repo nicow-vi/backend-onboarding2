@@ -7,6 +7,7 @@ import com.virtualidentity.onboarding.WebMvcTest;
 import org.junit.jupiter.api.Test;
 
 public class PokemonControllerTest extends WebMvcTest {
+
   private static final String URL = "/pokemons/";
 
   @Test
@@ -15,6 +16,7 @@ public class PokemonControllerTest extends WebMvcTest {
     performGET(URL)
         // Assert
         .andExpect(status().isOk())
+
         .andExpect(jsonPath("$[*].name").isArray());
   }
 }
