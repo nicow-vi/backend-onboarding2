@@ -7,7 +7,7 @@ plugins {
 	id 'org.openapi.generator' version '4.2.1'
 }
 
-group = 'com.myCompanyName.myProjectName'
+group = 'com.virtualidentity.onboarding'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '13'
 
@@ -79,9 +79,9 @@ openApiGenerate {
 	inputSpec.set(file('./api/api.yaml').getAbsolutePath())
 	outputDir.set("$buildDir/generated/openapi")
 
-	apiPackage.set("com.myCompanyName.myProjectName.generated")
-	invokerPackage.set("com.myCompanyName.myProjectName.invoker")
-	modelPackage.set("com.myCompanyName.myProjectName.generated.model")
+	apiPackage.set("com.virtualidentity.onboarding.generated")
+	invokerPackage.set("com.virtualidentity.onboarding.invoker")
+	modelPackage.set("com.virtualidentity.onboarding.generated.model")
 
 	configOptions = [
 			dateLibrary: "java8"

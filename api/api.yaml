@@ -2,7 +2,7 @@ openapi: '3.0.2'
 
 info:
   version: 1.0.0
-  title: myCompanyName-myProjectName
+  title: virtualidentity-onboarding
 
 servers:
   - url: '{protocol}://localhost'
@@ -14,24 +14,35 @@ servers:
         default: https
 
 paths:
+  /pokemons:
+    get:
+      operationId: getPokemons
+      responses:
+        200:
+          description: operation successful
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/pokemonList'
+
   /authors:
     get:
       tags:
         - author
       operationId: getAuthors
       parameters:
-       - name: limit
-         description: number of returned results
-         in: query
-         schema:
-           type: integer
-           default: 10
-       - name: offset
-         description: offset of returned results
-         in: query
-         schema:
-           type: integer
-           default: 0
+        - name: limit
+          description: number of returned results
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          description: offset of returned results
+          in: query
+          schema:
+            type: integer
+            default: 0
       responses:
         200:
           description: operation successful
@@ -46,11 +57,11 @@ paths:
         - author
       operationId: getAuthorById
       parameters:
-       - name: id
-         description: id of author
-         in: path
-         schema:
-           type: integer
+        - name: id
+          description: id of author
+          in: path
+          schema:
+            type: integer
       responses:
         200:
           description: operation successful
@@ -61,6 +72,21 @@ paths:
 
 components:
   schemas:
+
+    pokemonList:
+      type: array
+      description: a list of pokemons
+      items:
+        $ref: '#/components/schemas/pokemon'
+
+    pokemon:
+      type: object
+      description: pokemon with name and element
+      properties:
+        name:
+          type: string
+        element:
+          type: string
 
     authorList:
       type: object
