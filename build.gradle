@@ -1,10 +1,10 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.3.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-	id 'java'
-	id 'idea'
-	id 'jacoco'
-	id 'org.openapi.generator' version '4.2.1'
+    id 'org.springframework.boot' version '2.2.3.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+    id 'idea'
+    id 'jacoco'
+    id 'org.openapi.generator' version '4.2.1'
 }
 
 group = 'com.virtualidentity.onboarding'
@@ -12,99 +12,102 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '13'
 
 configurations {
-	testIntegrationCompile.extendsFrom testCompile
-	testIntegrationRuntime.extendsFrom testRuntime
+    testIntegrationCompile.extendsFrom testCompile
+    testIntegrationRuntime.extendsFrom testRuntime
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter-actuator'
-	compile 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
 
-	// add to fix incompatibility of spring boot
-	compile 'org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-hateoas'
 
-	compile 'io.swagger.core.v3:swagger-annotations:2.1.1'
-	compile 'org.openapitools:jackson-databind-nullable:0.2.1'
+    // add to fix incompatibility of spring boot
+    compile 'org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE'
 
-	compile 'io.springfox:springfox-swagger2:2.9.2'
-	compile 'io.springfox:springfox-swagger-ui:2.9.2'
+    compile 'io.swagger.core.v3:swagger-annotations:2.1.1'
+    compile 'org.openapitools:jackson-databind-nullable:0.2.1'
 
-	testCompile 'javax.validation:validation-api:2.0.1.Final'
+    compile 'io.springfox:springfox-swagger2:2.9.2'
+    compile 'io.springfox:springfox-swagger-ui:2.9.2'
 
-	testCompile('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+    testCompile 'javax.validation:validation-api:2.0.1.Final'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 sourceSets {
-	main {
-		java.srcDirs file('src/main/java')
-		java.srcDirs file('build/generated/openapi/src/main/java')
-		resources.srcDirs file('src/main/resources')
-	}
-	testIntegration {
-		java {
-			compileClasspath += main.output + test.output
-			runtimeClasspath += main.output + test.output
-			srcDir file('src/testIntegration/java')
-		}
-		resources.srcDir file('src/testIntegration/resources')
-	}
+    main {
+        java.srcDirs file('src/main/java')
+        java.srcDirs file('build/generated/openapi/src/main/java')
+        resources.srcDirs file('src/main/resources')
+    }
+    testIntegration {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/testIntegration/java')
+        }
+        resources.srcDir file('src/testIntegration/resources')
+    }
 }
 
 idea {
-	module {
-		testSourceDirs += project.sourceSets.testIntegration.java.srcDirs
-		testSourceDirs += project.sourceSets.testIntegration.resources.srcDirs
-	}
+    module {
+        testSourceDirs += project.sourceSets.testIntegration.java.srcDirs
+        testSourceDirs += project.sourceSets.testIntegration.resources.srcDirs
+    }
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 bootJar {
-	archiveFileName = "app.${archiveExtension.get()}"
+    archiveFileName = "app.${archiveExtension.get()}"
 }
 
 compileJava.dependsOn tasks.openApiGenerate
 // Actual task for generating the server
 openApiGenerate {
-	generatorName.set("spring")
+    generatorName.set("spring")
 
-	inputSpec.set(file('./api/api.yaml').getAbsolutePath())
-	outputDir.set("$buildDir/generated/openapi")
+    inputSpec.set(file('./api/api.yaml').getAbsolutePath())
+    outputDir.set("$buildDir/generated/openapi")
 
-	apiPackage.set("com.virtualidentity.onboarding.generated")
-	invokerPackage.set("com.virtualidentity.onboarding.invoker")
-	modelPackage.set("com.virtualidentity.onboarding.generated.model")
+    apiPackage.set("com.virtualidentity.onboarding.generated")
+    invokerPackage.set("com.virtualidentity.onboarding.invoker")
+    modelPackage.set("com.virtualidentity.onboarding.generated.model")
 
-	configOptions = [
-			dateLibrary: "java8"
-	]
+    configOptions = [
+            dateLibrary: "java8"
+    ]
 
-	additionalProperties = [
-			"interfaceOnly" : "true",
-			"unhandledException" : "true"
-	]
+    additionalProperties = [
+            "interfaceOnly"     : "true",
+            "unhandledException": "true"
+    ]
 }
 
 task testIntegration(type: Test) {
-	testClassesDirs = sourceSets.testIntegration.output.classesDirs
-	classpath = sourceSets.testIntegration.runtimeClasspath
+    testClassesDirs = sourceSets.testIntegration.output.classesDirs
+    classpath = sourceSets.testIntegration.runtimeClasspath
 
-	systemProperty 'spring.profiles.active', 'integration_test'
+    systemProperty 'spring.profiles.active', 'integration_test'
 
-	useJUnitPlatform()
+    useJUnitPlatform()
 
-	// This is not needed, but I like to see which tests have run
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
+    // This is not needed, but I like to see which tests have run
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 test.finalizedBy jacocoTestReport
@@ -113,9 +116,9 @@ testIntegration.finalizedBy jacocoTestReport
 build.dependsOn('testIntegration')
 
 jacocoTestReport {
-	reports {
-		xml.enabled false
-		csv.enabled false
-		html.destination file("${buildDir}/jacocoHtml")
-	}
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
 }
