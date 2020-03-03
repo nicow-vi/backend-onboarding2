@@ -1,4 +1,4 @@
-package com.myCompanyName.myProjectName;
+package com.virtualidentity.onboarding;
 
 import org.junit.jupiter.api.Test;
 
