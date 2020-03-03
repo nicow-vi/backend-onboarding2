@@ -3,7 +3,6 @@ package com.virtualidentity.onboarding.pokemons.rest;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.jayway.jsonpath.JsonPath;
 import com.virtualidentity.onboarding.WebMvcTest;
 import org.junit.jupiter.api.Test;
 
