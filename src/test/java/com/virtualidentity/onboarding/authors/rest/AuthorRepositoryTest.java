@@ -41,8 +41,6 @@ public class AuthorRepositoryTest {
     Blog blog2 = new Blog("Moby Dick", "Whale", author1);
 
     // Act
-    author1.addBlog(blog1);
-    author1.addBlog(blog2);
     authorRep.save(author1);
 
     // Assert
@@ -57,8 +55,6 @@ public class AuthorRepositoryTest {
     Author author1 = new Author("Nico", "Weingaertner");
     Blog blog1 = new Blog("Nice Title", "Good Text", author1);
     Blog blog2 = new Blog("Moby Dick", "Whale", author1);
-    author1.addBlog(blog1);
-    author1.addBlog(blog2);
     authorRep.save(author1);
 
     // Act
@@ -79,7 +75,7 @@ public class AuthorRepositoryTest {
     // Act
     author1.setFirstName("Updated Firstname");
     author1.setLastName("Updated Lastname");
-    //authorRep.save(author1);
+    authorRep.save(author1);
     Author authorFromDb = authorRep.findById(author1.getId()).get();
 
     //Assert

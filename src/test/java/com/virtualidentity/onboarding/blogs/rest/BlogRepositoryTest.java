@@ -41,7 +41,6 @@ public class BlogRepositoryTest {
     // Arrange
     Author author1 = new Author("Nico", "Wain");
     Blog blog1 = new Blog("Nice Title", "Good Text", author1);
-    author1.addBlog(blog1);
     authorRep.save(author1);
 
     // Act
@@ -57,7 +56,6 @@ public class BlogRepositoryTest {
     // Arrange
     Author author1 = new Author("Nico", "Wain");
     Blog blog1 = new Blog("Nice Title", "Good Text", author1);
-    author1.addBlog(blog1);
     authorRep.save(author1);
 
     // Act
