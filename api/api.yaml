@@ -138,6 +138,12 @@ paths:
             application/hal+json:
               schema:
                 $ref: '#/components/schemas/author'
+        404:
+          description: Author not found
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/error'
 
   /blogs:
     get:
