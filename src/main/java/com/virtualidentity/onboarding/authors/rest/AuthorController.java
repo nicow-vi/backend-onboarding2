@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -61,17 +62,22 @@ public class AuthorController extends BaseController implements AuthorsApi {
   }
 
   @Override
-  public ResponseEntity<AuthorList> getAuthors(@Valid Integer limit, @Valid Integer offset)
+  public ResponseEntity<AuthorList> getAuthors(
+      @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
+      @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset)
       throws Exception {
 
     AuthorList authorList = new AuthorList();
     authorRepository.findAll(PageRequest.of(offset, limit))
         .forEach(authorEntity -> authorList.addEmbeddedItem(entityToAuthor(authorEntity)));
-    authorList.links(new AuthorListLinks()
+    AuthorListLinks authorListLinks = new AuthorListLinks()
         .self(getHalGetLink(methodOn(this.getClass()).getAuthors(limit, offset)))
-        .next(getHalGetLink(methodOn(this.getClass()).getAuthors(limit, offset + 1)))
-        .previous(getHalGetLink(methodOn(this.getClass()).getAuthors(limit, offset - 1)))
-    );
+        .next(getHalGetLink(methodOn(this.getClass()).getAuthors(limit, offset + 1)));
+    if (offset != 0) {
+      authorListLinks
+          .previous(getHalGetLink(methodOn(this.getClass()).getAuthors(limit, offset - 1)));
+    }
+    authorList.links(authorListLinks);
 
     return new ResponseEntity<>(authorList, HttpStatus.OK);
   }
