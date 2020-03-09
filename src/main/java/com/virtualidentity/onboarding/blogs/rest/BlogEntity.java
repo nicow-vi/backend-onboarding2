@@ -1,6 +1,7 @@
 package com.virtualidentity.onboarding.blogs.rest;
 
-import com.virtualidentity.onboarding.authors.rest.Author;
+import com.virtualidentity.onboarding.authors.rest.AuthorEntity;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Blog {
+public class BlogEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,14 +17,14 @@ public class Blog {
   private String title;
   private String text;
 
-  @ManyToOne
-  private Author author;
+  @ManyToOne(cascade = CascadeType.ALL)
+  private AuthorEntity author;
 
-  public Blog() {
+  public BlogEntity() {
     //needed for JPA
   }
 
-  public Blog(String title, String text, Author author) {
+  public BlogEntity(String title, String text, AuthorEntity author) {
     this.title = title;
     this.text = text;
     this.author = author;
@@ -57,7 +58,11 @@ public class Blog {
     this.text = text;
   }
 
-  public void setAuthor(Author author) {
+  public void setAuthor(AuthorEntity author) {
     this.author = author;
+  }
+
+  public Long getAuthorId() {
+    return this.author.getId();
   }
 }

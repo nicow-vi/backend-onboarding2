@@ -1,6 +1,6 @@
 package com.virtualidentity.onboarding.authors.rest;
 
-import com.virtualidentity.onboarding.blogs.rest.Blog;
+import com.virtualidentity.onboarding.blogs.rest.BlogEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Author {
+public class AuthorEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,13 +20,13 @@ public class Author {
   private String lastName;
 
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Blog> blogs;
+  private List<BlogEntity> blogs;
 
-  public Author() {
+  public AuthorEntity() {
     //needed for JPA
   }
 
-  public Author(String firstName, String lastName) {
+  public AuthorEntity(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.blogs = new ArrayList<>();
@@ -59,20 +59,20 @@ public class Author {
     this.lastName = lastName;
   }
 
-  public void addBlog(Blog blog) {
+  public void addBlog(BlogEntity blog) {
     blog.setAuthor(this);
     blogs.add(blog);
   }
 
-  public void setBlogs(List<Blog> blogs) {
+  public void setBlogs(List<BlogEntity> blogs) {
     this.blogs = blogs;
   }
 
-  public List<Blog> getBlogs() {
+  public List<BlogEntity> getBlogs() {
     return blogs;
   }
 
-  public void removeBlog(Blog blog) {
+  public void removeBlog(BlogEntity blog) {
     blog.setAuthor(null);
     blogs.remove(blog);
   }

@@ -1,8 +1,10 @@
 package com.virtualidentity.onboarding;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +35,24 @@ public abstract class WebMvcTest extends IntegrationTests {
       requestBuilder.contentType(APPLICATION_JSON);
       requestBuilder.content(jsonContent);
     }
+    return this.mockMvc.perform(requestBuilder);
+  }
+
+  protected ResultActions performDELETE(final String url) throws Exception {
+    MockHttpServletRequestBuilder requestBuilder = delete(url);
+
+    requestBuilder.contentType(APPLICATION_JSON);
+    return this.mockMvc.perform(requestBuilder);
+  }
+
+  protected ResultActions performPUT(final String url, final String jsonContent) throws Exception {
+    MockHttpServletRequestBuilder requestBuilder = put(url);
+
+    if (jsonContent != null) {
+      requestBuilder.contentType(APPLICATION_JSON);
+      requestBuilder.content(jsonContent);
+    }
+    requestBuilder.contentType(APPLICATION_JSON);
     return this.mockMvc.perform(requestBuilder);
   }
 
