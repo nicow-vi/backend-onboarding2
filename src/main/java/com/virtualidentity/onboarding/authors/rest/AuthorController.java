@@ -52,12 +52,13 @@ public class AuthorController extends BaseController implements AuthorsApi {
   @Override
   public ResponseEntity<Author> getAuthorById(@PathVariable("id") BigDecimal id) {
     Optional<AuthorEntity> searchedAuthor = authorRepository.findById(id.longValue());
+    Author author = new Author();
     if (searchedAuthor.isPresent()) {
       AuthorEntity authorFromDB = searchedAuthor.get();
-      Author author = entityToAuthor(authorFromDB);
+      author = entityToAuthor(authorFromDB);
       return new ResponseEntity<>(author, HttpStatus.OK);
     } else {
-      throw new IllegalArgumentException("Could not find author");
+      throw new IllegalArgumentException("Author not found!");
     }
   }
 
