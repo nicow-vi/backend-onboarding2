@@ -12,16 +12,29 @@ import com.virtualidentity.onboarding.authors.rest.AuthorRepository;
 import com.virtualidentity.onboarding.generated.model.Blog;
 import com.virtualidentity.onboarding.generated.model.BlogList;
 import com.virtualidentity.onboarding.generated.model.InlineResponse2001;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 public class BlogControllerTest extends WebMvcTest {
+
+  @Autowired
+  EntityManager entityManager;
 
   @Autowired
   AuthorRepository authorRepository;
   @Autowired
   BlogRepository blogRepository;
   private static final String BLOG_URL = "/blogs/";
+
+
+  @BeforeEach
+  public void clear_database() {
+    authorRepository.deleteAll();
+    blogRepository.deleteAll();
+  }
 
   @Test
   public void WHEN_get_all_blogs_THEN_get_all_blogs() throws Exception {
@@ -37,6 +50,44 @@ public class BlogControllerTest extends WebMvcTest {
         // Assert
         .andExpect(status().isOk())
         .andExpect(ApiMatchers.responseMatchesModel(BlogList.class));
+  }
+
+  @Test
+  public void WHEN_get_all_blogs_with_title_query_THEN_get_blogs_with_matching_title()
+      throws Exception {
+    // Arrange
+    AuthorEntity author1 = new AuthorEntity("Niggo", "Wein");
+    AuthorEntity author2 = new AuthorEntity("Lili", "Mihova");
+    BlogEntity blog1 = new BlogEntity("Harry Potter", "In der Kammer des Schreckens", author1);
+    BlogEntity blog2 = new BlogEntity("Herr der Ringe", "Mein Schatz!", author2);
+    blogRepository.save(blog1);
+    blogRepository.save(blog2);
+    // Act
+    performGET(BLOG_URL + "?title=ringe")
+        // Assert
+        .andExpect(status().isOk())
+        .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
+        .andExpect(jsonPath("$..title").value("Herr der Ringe"));
+
+  }
+
+  @Test
+  public void WHEN_get_all_blogs_with_text_query_THEN_get_blogs_with_matching_text()
+      throws Exception {
+    // Arrange
+    AuthorEntity author1 = new AuthorEntity("Niggo", "Wein");
+    AuthorEntity author2 = new AuthorEntity("Lili", "Mihova");
+    BlogEntity blog1 = new BlogEntity("Harry Potter", "In der Kammer des Schreckens", author1);
+    BlogEntity blog2 = new BlogEntity("Herr der Ringe", "Mein Schatz!", author2);
+    blogRepository.save(blog1);
+    blogRepository.save(blog2);
+    // Act
+    performGET(BLOG_URL + "?text=Schatz!")
+        // Assert
+        .andExpect(status().isOk())
+        .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
+        .andExpect(jsonPath("$..text").value("Mein Schatz!"));
+
   }
 
   @Test
@@ -90,5 +141,6 @@ public class BlogControllerTest extends WebMvcTest {
         .andExpect(ApiMatchers.responseMatchesModel(Blog.class))
         .andExpect(jsonPath("$.title").value("Freshly"))
         .andExpect(jsonPath("$.text").value("Updated"));
+
   }
 }

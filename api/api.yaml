@@ -150,6 +150,45 @@ paths:
       tags:
         - blog
       operationId: getAllBlogs
+      parameters:
+        - name: title
+          description: title of the blog
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: text
+          description: text of the blog
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: authorfirstname
+          description: text of the blog
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: authorlastname
+          description: text of the blog
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: limit
+          description: number of returned results
+          in: query
+          schema:
+            type: integer
+            default: 10
+          required: false
+        - name: offset
+          description: offset of returned results
+          in: query
+          schema:
+            type: integer
+            default: 0
+          required: false
       responses:
         200:
           description: operation successful
@@ -157,6 +196,7 @@ paths:
             application/hal+json:
               schema:
                 $ref: '#/components/schemas/blogList'
+
 
   /blogs/{id}:
     get:

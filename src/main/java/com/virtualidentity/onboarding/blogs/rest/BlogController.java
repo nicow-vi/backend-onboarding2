@@ -13,15 +13,27 @@ import com.virtualidentity.onboarding.generated.model.BlogRequest;
 import com.virtualidentity.onboarding.generated.model.HalLink;
 import com.virtualidentity.onboarding.generated.model.InlineResponse2001;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.BooleanJunction;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class BlogController extends BaseController implements BlogsApi {
+
+  @PersistenceContext
+  EntityManager entityManager;
 
   @Autowired
   AuthorRepository authorRepository;
@@ -42,10 +54,91 @@ public class BlogController extends BaseController implements BlogsApi {
     }
   }
 
+
   @Override
-  public ResponseEntity<BlogList> getAllBlogs() throws Exception {
+  public ResponseEntity<BlogList> getAllBlogs(@PathVariable String title, @PathVariable String text,
+      @PathVariable String authorfirstname, @PathVariable String authorlastname,
+      @PathVariable Integer limit, @PathVariable Integer offset) throws Exception {
+
+    List<BlogEntity> results = new ArrayList<>();
     BlogList blogList = new BlogList();
-    blogRepository.findAll()
+
+    if (!Optional.ofNullable(title).isPresent() && !Optional.ofNullable(text).isPresent()
+        && !Optional.ofNullable(authorfirstname).isPresent() && !Optional.ofNullable(authorlastname)
+        .isPresent()) {
+      blogRepository.findAll()
+          .forEach(blogEntity -> {
+            try {
+              blogList.addEmbeddedItem(entityToBlog(blogEntity));
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          });
+      blogList.links(new AuthorListLinks()
+          .self(getHalGetLink(
+              methodOn(this.getClass()).getAllBlogs(null, null, null, null, limit, offset))));
+      return new ResponseEntity<>(blogList, HttpStatus.OK);
+    }
+
+    FullTextEntityManager fullTextEntityManager
+        = Search.getFullTextEntityManager(entityManager);
+    fullTextEntityManager.createIndexer().startAndWait();
+
+    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
+        .buildQueryBuilder()
+        .forEntity(BlogEntity.class)
+        .get();
+
+    final BooleanJunction<BooleanJunction> combinedQuery = queryBuilder
+        .bool();
+
+    if (Optional.ofNullable(title).isPresent()) {
+      combinedQuery
+          .should(queryBuilder
+              .keyword()
+              .fuzzy()
+              .withEditDistanceUpTo(2)
+              .onField("title")
+              .matching(title)
+              .createQuery());
+    }
+    if (Optional.ofNullable(text).isPresent()) {
+      combinedQuery
+          .should(queryBuilder
+              .keyword()
+              .fuzzy()
+              .withEditDistanceUpTo(2)
+              .onField("text")
+              .matching(text)
+              .createQuery());
+    }
+    if (Optional.ofNullable(authorfirstname).isPresent()) {
+      combinedQuery
+          .should(queryBuilder
+              .keyword()
+              .fuzzy()
+              .withEditDistanceUpTo(2)
+              .onField("text")
+              .matching(text)
+              .createQuery());
+    }
+    if (Optional.ofNullable(authorlastname).isPresent()) {
+      combinedQuery
+          .should(queryBuilder
+              .keyword()
+              .fuzzy()
+              .withEditDistanceUpTo(2)
+              .onField("text")
+              .matching(text)
+              .createQuery());
+    }
+
+    org.hibernate.search.jpa.FullTextQuery jpaQuery
+        = fullTextEntityManager.createFullTextQuery(combinedQuery.createQuery(), BlogEntity.class);
+
+    results.addAll(jpaQuery.getResultList());
+
+    results
         .forEach(blogEntity -> {
           try {
             blogList.addEmbeddedItem(entityToBlog(blogEntity));
@@ -54,10 +147,10 @@ public class BlogController extends BaseController implements BlogsApi {
           }
         });
     blogList.links(new AuthorListLinks()
-        .self(getHalGetLink(methodOn(this.getClass()).getAllBlogs())));
+        .self(getHalGetLink(methodOn(this.getClass())
+            .getAllBlogs(title, text, authorfirstname, authorlastname, limit, offset))));
     return new ResponseEntity<>(blogList, HttpStatus.OK);
   }
-
 
   @Override
   public ResponseEntity<InlineResponse2001> deleteBlogById(BigDecimal id) throws Exception {
@@ -65,7 +158,8 @@ public class BlogController extends BaseController implements BlogsApi {
     if (searchedBlog.isPresent()) {
       blogRepository.deleteById(id.longValue());
       InlineResponse2001 response2001 = new InlineResponse2001()
-          .blogs(getHalGetLink(methodOn(this.getClass()).getAllBlogs()));
+          .blogs(
+              getHalGetLink(methodOn(this.getClass()).getAllBlogs(null, null, null, null, 0, 0)));
 
       return new ResponseEntity<>(response2001, HttpStatus.OK);
     } else {

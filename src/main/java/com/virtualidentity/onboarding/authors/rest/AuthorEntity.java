@@ -9,14 +9,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
+@Indexed
 @Entity
 public class AuthorEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
+  @Field
   private String firstName;
+  @Field
   private String lastName;
 
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -7,17 +7,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
+@Indexed
 @Entity
 public class BlogEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
+  @Field
   private String title;
+  @Field
   private String text;
 
   @ManyToOne(cascade = CascadeType.ALL)
+  @IndexedEmbedded
   private AuthorEntity author;
 
   public BlogEntity() {
