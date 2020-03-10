@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,7 +44,7 @@ public class BlogController extends BaseController implements BlogsApi {
 
 
   @Override
-  public ResponseEntity<Blog> getBlogById(BigDecimal id) throws Exception {
+  public ResponseEntity<Blog> getBlogById(@PathVariable BigDecimal id) throws Exception {
     Optional<BlogEntity> searchedBlog = blogRepository.findById(id.longValue());
     if (searchedBlog.isPresent()) {
       BlogEntity blogFromDB = searchedBlog.get();
@@ -54,11 +55,12 @@ public class BlogController extends BaseController implements BlogsApi {
     }
   }
 
-
   @Override
-  public ResponseEntity<BlogList> getAllBlogs(@PathVariable String title, @PathVariable String text,
-      @PathVariable String authorfirstname, @PathVariable String authorlastname,
-      @PathVariable Integer limit, @PathVariable Integer offset) throws Exception {
+  public ResponseEntity<BlogList> getAllBlogs(
+      @RequestParam(value = "query", required = false) String query,
+      @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
+      @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset)
+      throws Exception {
 
     List<BlogEntity> results = new ArrayList<>();
     BlogList blogList = new BlogList();
@@ -75,50 +77,18 @@ public class BlogController extends BaseController implements BlogsApi {
     final BooleanJunction<BooleanJunction> combinedQuery = queryBuilder
         .bool();
 
-    if (!Optional.ofNullable(title).isPresent() && !Optional.ofNullable(text).isPresent()
-        && !Optional.ofNullable(authorfirstname).isPresent() && !Optional.ofNullable(authorlastname)
-        .isPresent()) {
+    if (!Optional.ofNullable(query).isPresent()) {
       combinedQuery.should(queryBuilder.all().createQuery());
     }
 
-    if (Optional.ofNullable(title).isPresent()) {
+    if (Optional.ofNullable(query).isPresent()) {
       combinedQuery
           .should(queryBuilder
               .keyword()
               .fuzzy()
               .withEditDistanceUpTo(2)
-              .onField("title")
-              .matching(title)
-              .createQuery());
-    }
-    if (Optional.ofNullable(text).isPresent()) {
-      combinedQuery
-          .should(queryBuilder
-              .keyword()
-              .fuzzy()
-              .withEditDistanceUpTo(2)
-              .onField("text")
-              .matching(text)
-              .createQuery());
-    }
-    if (Optional.ofNullable(authorfirstname).isPresent()) {
-      combinedQuery
-          .should(queryBuilder
-              .keyword()
-              .fuzzy()
-              .withEditDistanceUpTo(2)
-              .onField("author.firstname")
-              .matching(authorfirstname)
-              .createQuery());
-    }
-    if (Optional.ofNullable(authorlastname).isPresent()) {
-      combinedQuery
-          .should(queryBuilder
-              .keyword()
-              .fuzzy()
-              .withEditDistanceUpTo(2)
-              .onField("author.lastname")
-              .matching(authorlastname)
+              .onFields("title", "text", "author.firstname", "author.lastname")
+              .matching(query)
               .createQuery());
     }
 
@@ -138,18 +108,19 @@ public class BlogController extends BaseController implements BlogsApi {
         });
     blogList.links(new AuthorListLinks()
         .self(getHalGetLink(methodOn(this.getClass())
-            .getAllBlogs(title, text, authorfirstname, authorlastname, limit, offset))));
+            .getAllBlogs(query, limit, offset))));
     return new ResponseEntity<>(blogList, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<InlineResponse2001> deleteBlogById(BigDecimal id) throws Exception {
+  public ResponseEntity<InlineResponse2001> deleteBlogById(@PathVariable BigDecimal id)
+      throws Exception {
     Optional<BlogEntity> searchedBlog = blogRepository.findById(id.longValue());
     if (searchedBlog.isPresent()) {
       blogRepository.deleteById(id.longValue());
       InlineResponse2001 response2001 = new InlineResponse2001()
           .blogs(
-              getHalGetLink(methodOn(this.getClass()).getAllBlogs(null, null, null, null, 0, 0)));
+              getHalGetLink(methodOn(this.getClass()).getAllBlogs(null, 0, 0)));
 
       return new ResponseEntity<>(response2001, HttpStatus.OK);
     } else {
@@ -158,7 +129,8 @@ public class BlogController extends BaseController implements BlogsApi {
   }
 
   @Override
-  public ResponseEntity<Blog> updateBlogById(BigDecimal id, @Valid BlogRequest blogRequest)
+  public ResponseEntity<Blog> updateBlogById(@PathVariable BigDecimal id,
+      @Valid BlogRequest blogRequest)
       throws Exception {
     Optional<BlogEntity> searchedBlog = blogRepository.findById(id.longValue());
     if (searchedBlog.isPresent()) {

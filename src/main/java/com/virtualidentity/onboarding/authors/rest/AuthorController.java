@@ -155,7 +155,8 @@ public class AuthorController extends BaseController implements AuthorsApi {
   }
 
   @Override
-  public ResponseEntity<BlogList> getBlogsByAuthor(BigDecimal id, @Valid Integer limit,
+  public ResponseEntity<BlogList> getBlogsByAuthor(@PathVariable BigDecimal id,
+      @Valid Integer limit,
       @Valid Integer offset) throws Exception {
     BlogList blogList = new BlogList();
     BlogController blogController = new BlogController();

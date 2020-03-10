@@ -68,6 +68,9 @@ paths:
             application/hal+json:
               schema:
                 $ref: '#/components/schemas/authorList'
+        404:
+          description: couldnt finy any authors
+
 
   /authors/{id}:
     delete:
@@ -151,26 +154,8 @@ paths:
         - blog
       operationId: getAllBlogs
       parameters:
-        - name: title
-          description: title of the blog
-          in: query
-          schema:
-            type: string
-          required: false
-        - name: text
-          description: text of the blog
-          in: query
-          schema:
-            type: string
-          required: false
-        - name: authorfirstname
-          description: text of the blog
-          in: query
-          schema:
-            type: string
-          required: false
-        - name: authorlastname
-          description: text of the blog
+        - name: query
+          description: query parameter
           in: query
           schema:
             type: string
