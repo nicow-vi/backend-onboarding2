@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -20,10 +21,11 @@ public class AuthorEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @Field
-  private String firstName;
+  private String firstname;
   @Field
-  private String lastName;
+  private String lastname;
 
+  @ContainedIn
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<BlogEntity> blogs;
 
@@ -31,9 +33,9 @@ public class AuthorEntity {
     //needed for JPA
   }
 
-  public AuthorEntity(String firstName, String lastName) {
-    this.firstName = firstName;
-    this.lastName = lastName;
+  public AuthorEntity(String firstname, String lastname) {
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.blogs = new ArrayList<>();
   }
 
@@ -41,27 +43,27 @@ public class AuthorEntity {
   public String toString() {
     return String.format(
         "Customer[id=%d, firstName='%s', lastName='%s']",
-        id, firstName, lastName);
+        id, firstname, lastname);
   }
 
   public Long getId() {
     return id;
   }
 
-  public String getFirstName() {
-    return firstName;
+  public String getFirstname() {
+    return firstname;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
+  public void setFirstname(String firstName) {
+    this.firstname = firstName;
   }
 
-  public String getLastName() {
-    return lastName;
+  public String getLastname() {
+    return lastname;
   }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
+  public void setLastname(String lastName) {
+    this.lastname = lastName;
   }
 
   public void addBlog(BlogEntity blog) {

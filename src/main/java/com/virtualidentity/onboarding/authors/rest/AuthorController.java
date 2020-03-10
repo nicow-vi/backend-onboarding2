@@ -105,8 +105,8 @@ public class AuthorController extends BaseController implements AuthorsApi {
     Optional<AuthorEntity> searchedAuthor = authorRepository.findById(id.longValue());
     if (searchedAuthor.isPresent()) {
       AuthorEntity authorFromDB = searchedAuthor.get();
-      authorFromDB.setFirstName(authorRequestBody.getFirstname());
-      authorFromDB.setLastName(authorRequestBody.getLastname());
+      authorFromDB.setFirstname(authorRequestBody.getFirstname());
+      authorFromDB.setLastname(authorRequestBody.getLastname());
       AuthorEntity updatedAuthor = authorRepository.save(authorFromDB);
       Author author = entityToAuthor(updatedAuthor);
 
@@ -119,8 +119,8 @@ public class AuthorController extends BaseController implements AuthorsApi {
   private Author entityToAuthor(AuthorEntity authorEntity) {
     return new Author()
         .id(BigDecimal.valueOf(authorEntity.getId()))
-        .firstname(authorEntity.getFirstName())
-        .lastname(authorEntity.getLastName())
+        .firstname(authorEntity.getFirstname())
+        .lastname(authorEntity.getLastname())
         .links(new AuthorLinks().self(getAuthorLink(authorEntity.getId())));
   }
 

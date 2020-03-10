@@ -29,8 +29,8 @@ public class AuthorRepositoryTest {
 
     // Assert
     assertThat(authorRep.existsById(author1.getId()), is(true));
-    assertThat(authorFromDb.getFirstName(), is("Nico"));
-    assertThat(authorFromDb.getLastName(), is("Weingaertner"));
+    assertThat(authorFromDb.getFirstname(), is("Nico"));
+    assertThat(authorFromDb.getLastname(), is("Weingaertner"));
   }
 
   @Test
@@ -73,13 +73,13 @@ public class AuthorRepositoryTest {
     authorRep.save(author1);
 
     // Act
-    author1.setFirstName("Updated Firstname");
-    author1.setLastName("Updated Lastname");
+    author1.setFirstname("Updated Firstname");
+    author1.setLastname("Updated Lastname");
     authorRep.save(author1);
     AuthorEntity authorFromDb = authorRep.findById(author1.getId()).get();
 
     //Assert
-    assertThat(authorFromDb.getFirstName(), is("Updated Firstname"));
-    assertThat(authorFromDb.getLastName(), is("Updated Lastname"));
+    assertThat(authorFromDb.getFirstname(), is("Updated Firstname"));
+    assertThat(authorFromDb.getLastname(), is("Updated Lastname"));
   }
 }

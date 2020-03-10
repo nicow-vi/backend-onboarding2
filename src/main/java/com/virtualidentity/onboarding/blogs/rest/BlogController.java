@@ -118,8 +118,8 @@ public class BlogController extends BaseController implements BlogsApi {
               .keyword()
               .fuzzy()
               .withEditDistanceUpTo(2)
-              .onField("text")
-              .matching(text)
+              .onField("author.firstname")
+              .matching(authorfirstname)
               .createQuery());
     }
     if (Optional.ofNullable(authorlastname).isPresent()) {
@@ -128,8 +128,8 @@ public class BlogController extends BaseController implements BlogsApi {
               .keyword()
               .fuzzy()
               .withEditDistanceUpTo(2)
-              .onField("text")
-              .matching(text)
+              .onField("author.lastname")
+              .matching(authorlastname)
               .createQuery());
     }
 

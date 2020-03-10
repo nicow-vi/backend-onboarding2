@@ -91,6 +91,44 @@ public class BlogControllerTest extends WebMvcTest {
   }
 
   @Test
+  public void WHEN_get_all_blogs_with_authorfirstname_query_THEN_get_blogs_with_matching_author()
+      throws Exception {
+    // Arrange
+    AuthorEntity author1 = new AuthorEntity("Niggo", "Wein");
+    AuthorEntity author2 = new AuthorEntity("Lili", "Mihova");
+    BlogEntity blog1 = new BlogEntity("Harry Potter", "In der Kammer des Schreckens", author1);
+    BlogEntity blog2 = new BlogEntity("Herr der Ringe", "Mein Schatz!", author2);
+    blogRepository.save(blog1);
+    blogRepository.save(blog2);
+    // Act
+    performGET(BLOG_URL + "?authorfirstname=Niggo")
+        // Assert
+        .andExpect(status().isOk())
+        .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
+        .andExpect(jsonPath("$..title").value("Harry Potter"));
+
+  }
+
+  @Test
+  public void WHEN_get_all_blogs_with_authorlastname_query_THEN_get_blogs_with_matching_author()
+      throws Exception {
+    // Arrange
+    AuthorEntity author1 = new AuthorEntity("Niggo", "Wein");
+    AuthorEntity author2 = new AuthorEntity("Lili", "Mihova");
+    BlogEntity blog1 = new BlogEntity("Harry Potter", "In der Kammer des Schreckens", author1);
+    BlogEntity blog2 = new BlogEntity("Herr der Ringe", "Mein Schatz!", author2);
+    blogRepository.save(blog1);
+    blogRepository.save(blog2);
+    // Act
+    performGET(BLOG_URL + "?authorlastname=Wein")
+        // Assert
+        .andExpect(status().isOk())
+        .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
+        .andExpect(jsonPath("$..title").value("Harry Potter"));
+
+  }
+
+  @Test
   public void WHEN_get_blog_by_id_THEN_get_blog_by_id() throws Exception {
     // Arrange
     AuthorEntity author1 = new AuthorEntity("Get", "Blogs");
