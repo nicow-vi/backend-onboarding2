@@ -63,23 +63,6 @@ public class BlogController extends BaseController implements BlogsApi {
     List<BlogEntity> results = new ArrayList<>();
     BlogList blogList = new BlogList();
 
-    if (!Optional.ofNullable(title).isPresent() && !Optional.ofNullable(text).isPresent()
-        && !Optional.ofNullable(authorfirstname).isPresent() && !Optional.ofNullable(authorlastname)
-        .isPresent()) {
-      blogRepository.findAll()
-          .forEach(blogEntity -> {
-            try {
-              blogList.addEmbeddedItem(entityToBlog(blogEntity));
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-          });
-      blogList.links(new AuthorListLinks()
-          .self(getHalGetLink(
-              methodOn(this.getClass()).getAllBlogs(null, null, null, null, limit, offset))));
-      return new ResponseEntity<>(blogList, HttpStatus.OK);
-    }
-
     FullTextEntityManager fullTextEntityManager
         = Search.getFullTextEntityManager(entityManager);
     fullTextEntityManager.createIndexer().startAndWait();
@@ -91,6 +74,12 @@ public class BlogController extends BaseController implements BlogsApi {
 
     final BooleanJunction<BooleanJunction> combinedQuery = queryBuilder
         .bool();
+
+    if (!Optional.ofNullable(title).isPresent() && !Optional.ofNullable(text).isPresent()
+        && !Optional.ofNullable(authorfirstname).isPresent() && !Optional.ofNullable(authorlastname)
+        .isPresent()) {
+      combinedQuery.should(queryBuilder.all().createQuery());
+    }
 
     if (Optional.ofNullable(title).isPresent()) {
       combinedQuery
@@ -135,7 +124,8 @@ public class BlogController extends BaseController implements BlogsApi {
 
     org.hibernate.search.jpa.FullTextQuery jpaQuery
         = fullTextEntityManager.createFullTextQuery(combinedQuery.createQuery(), BlogEntity.class);
-
+    jpaQuery.setFirstResult(offset); //start from the 15th element
+    jpaQuery.setMaxResults(limit); //return 10 elements
     results.addAll(jpaQuery.getResultList());
 
     results
