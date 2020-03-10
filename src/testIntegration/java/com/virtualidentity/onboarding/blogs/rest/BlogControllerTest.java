@@ -63,7 +63,7 @@ public class BlogControllerTest extends WebMvcTest {
     blogRepository.save(blog1);
     blogRepository.save(blog2);
     // Act
-    performGET(BLOG_URL + "?title=ringe")
+    performGET(BLOG_URL + "?query=ringe")
         // Assert
         .andExpect(status().isOk())
         .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
@@ -82,7 +82,7 @@ public class BlogControllerTest extends WebMvcTest {
     blogRepository.save(blog1);
     blogRepository.save(blog2);
     // Act
-    performGET(BLOG_URL + "?text=Schatz!")
+    performGET(BLOG_URL + "?query=Schatz!")
         // Assert
         .andExpect(status().isOk())
         .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
@@ -101,7 +101,7 @@ public class BlogControllerTest extends WebMvcTest {
     blogRepository.save(blog1);
     blogRepository.save(blog2);
     // Act
-    performGET(BLOG_URL + "?authorfirstname=Niggo")
+    performGET(BLOG_URL + "?query=Niggo")
         // Assert
         .andExpect(status().isOk())
         .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
@@ -120,11 +120,11 @@ public class BlogControllerTest extends WebMvcTest {
     blogRepository.save(blog1);
     blogRepository.save(blog2);
     // Act
-    performGET(BLOG_URL + "?authorlastname=Wein")
+    performGET(BLOG_URL + "?query=Mihova")
         // Assert
         .andExpect(status().isOk())
         .andExpect(ApiMatchers.responseMatchesModel(BlogList.class))
-        .andExpect(jsonPath("$..title").value("Harry Potter"));
+        .andExpect(jsonPath("$..title").value("Herr der Ringe"));
 
   }
 
