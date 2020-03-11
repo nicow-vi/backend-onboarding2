@@ -94,8 +94,8 @@ public class BlogController extends BaseController implements BlogsApi {
 
     org.hibernate.search.jpa.FullTextQuery jpaQuery
         = fullTextEntityManager.createFullTextQuery(combinedQuery.createQuery(), BlogEntity.class);
-    jpaQuery.setFirstResult(offset); //start from the 15th element
-    jpaQuery.setMaxResults(limit); //return 10 elements
+    jpaQuery.setFirstResult(offset);
+    jpaQuery.setMaxResults(limit);
     results.addAll(jpaQuery.getResultList());
 
     results
