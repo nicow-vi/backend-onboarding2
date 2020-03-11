@@ -1,6 +1,5 @@
-package com.virtualidentity.onboarding.authors.rest;
+package com.virtualidentity.onboarding.graphql.model;
 
-import com.virtualidentity.onboarding.blogs.rest.BlogEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -11,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class AuthorEntity {
+public class Author {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,13 +19,13 @@ public class AuthorEntity {
   private String lastName;
 
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<BlogEntity> blogs;
+  private List<Blog> blogs;
 
-  public AuthorEntity() {
+  public Author() {
     //needed for JPA
   }
 
-  public AuthorEntity(String firstName, String lastName) {
+  public Author(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.blogs = new ArrayList<>();
@@ -59,20 +58,20 @@ public class AuthorEntity {
     this.lastName = lastName;
   }
 
-  public void addBlog(BlogEntity blog) {
+  public void addBlog(Blog blog) {
     blog.setAuthor(this);
     blogs.add(blog);
   }
 
-  public void setBlogs(List<BlogEntity> blogs) {
+  public void setBlogs(List<Blog> blogs) {
     this.blogs = blogs;
   }
 
-  public List<BlogEntity> getBlogs() {
+  public List<Blog> getBlogs() {
     return blogs;
   }
 
-  public void removeBlog(BlogEntity blog) {
+  public void removeBlog(Blog blog) {
     blog.setAuthor(null);
     blogs.remove(blog);
   }

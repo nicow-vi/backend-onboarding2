@@ -1,0 +1,19 @@
+type Author {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    blogs:[Blog]
+}
+
+# Root
+type Query {
+    getAllAuthors: [Author]!
+    getAuthorById(id:ID!): Author!
+}
+
+# Root
+type Mutation {
+    createAuthor(firstName: String!, lastName: String!): Author!
+    updateAuthor(id: ID!,firstName: String!, lastName: String!): Author!
+    deleteAuthor(id:ID!): Boolean
+}
