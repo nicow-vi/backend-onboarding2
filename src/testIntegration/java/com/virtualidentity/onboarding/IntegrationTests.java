@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ActiveProfiles("integration_test")
 @TestPropertySource(locations = "classpath:application-integration_tests.properties")
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 @DirtiesContext
 public abstract class IntegrationTests extends AbstractJUnit4SpringContextTests {
