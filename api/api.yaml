@@ -2,36 +2,65 @@ openapi: '3.0.2'
 
 info:
   version: 1.0.0
-  title: myCompanyName-myProjectName
+  title: virtualidentity-onboarding
 
 servers:
-  - url: '{protocol}://localhost'
+  - url: '{protocol}://localhost:8080/'
     variables:
       protocol:
         enum:
           - http
           - https
-        default: https
+        default: http
 
 paths:
+  /pokemons:
+    get:
+      operationId: getPokemons
+      responses:
+        200:
+          description: operation successful
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/pokemonList'
+
   /authors:
+    post:
+      tags:
+        - author
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authorRequest'
+
+      responses:
+        201:
+          description: Author created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/author'
     get:
       tags:
         - author
       operationId: getAuthors
       parameters:
-       - name: limit
-         description: number of returned results
-         in: query
-         schema:
-           type: integer
-           default: 10
-       - name: offset
-         description: offset of returned results
-         in: query
-         schema:
-           type: integer
-           default: 0
+        - name: limit
+          description: number of returned results
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          description: offset of returned results
+          in: query
+          schema:
+            type: integer
+            default: 0
       responses:
         200:
           description: operation successful
@@ -41,16 +70,67 @@ paths:
                 $ref: '#/components/schemas/authorList'
 
   /authors/{id}:
+    delete:
+      tags:
+        - author
+      operationId: deleteAuthorById
+      parameters:
+        - name: id
+          description: id of author
+          in: path
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: Author deleted
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - self
+                properties:
+                  authors:
+                    $ref: '#/components/schemas/halLink'
+
+    put:
+      tags:
+        - author
+      operationId: updateAuthorById
+      parameters:
+        - name: id
+          description: id of author
+          in: path
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authorRequest'
+
+      responses:
+        200:
+          description: Author updated
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/author'
+
     get:
       tags:
         - author
       operationId: getAuthorById
       parameters:
-       - name: id
-         description: id of author
-         in: path
-         schema:
-           type: integer
+        - name: id
+          description: id of author
+          in: path
+          schema:
+            type: number
+            format: int64
       responses:
         200:
           description: operation successful
@@ -59,8 +139,165 @@ paths:
               schema:
                 $ref: '#/components/schemas/author'
 
+  /blogs:
+    get:
+      tags:
+        - blog
+      operationId: getAllBlogs
+      responses:
+        200:
+          description: operation successful
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/blogList'
+
+  /blogs/{id}:
+    get:
+      tags:
+        - blog
+      operationId: getBlogById
+      parameters:
+        - name: id
+          description: id of blog
+          in: path
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: operation successful
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/blog'
+
+    delete:
+      tags:
+        - blog
+      operationId: deleteBlogById
+      parameters:
+        - name: id
+          description: id of blog
+          in: path
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: Blog deleted
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - self
+                properties:
+                  blogs:
+                    $ref: '#/components/schemas/halLink'
+    put:
+      tags:
+        - blog
+      operationId: updateBlogById
+      parameters:
+        - name: id
+          description: id of blog
+          in: path
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/blogRequest'
+      responses:
+        200:
+          description: blog updated
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/blog'
+
+  /authors/{id}/blogs:
+    post:
+      tags:
+        - author
+      operationId: createBlog
+      parameters:
+        - name: id
+          required: true
+          description: id of author
+          in: path
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/blogRequest'
+      responses:
+        201:
+          description: Blog created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/blog'
+    get:
+      tags:
+        - author
+      operationId: getBlogsByAuthor
+      parameters:
+        - name: id
+          required: true
+          description: id of author
+          in: path
+          schema:
+            type: number
+            format: int64
+        - name: limit
+          description: number of returned results
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          description: offset of returned results
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        200:
+          description: operation successful
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/blogList'
+
+
+
+
 components:
   schemas:
+
+    pokemonList:
+      type: array
+      description: a list of pokemons
+      items:
+        $ref: '#/components/schemas/pokemon'
+
+    pokemon:
+      type: object
+      description: pokemon with name and element
+      properties:
+        name:
+          type: string
+        element:
+          type: string
 
     authorList:
       type: object
@@ -86,13 +323,41 @@ components:
             previous:
               $ref: '#/components/schemas/halLink'
 
-    author:
+    authorRequest:
       type: object
       description: author with first and last name
       required:
         - firstname
         - lastname
       properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+
+    blogRequest:
+      type: object
+      description: blog with title and text
+      required:
+        - title
+        - text
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+
+    author:
+      type: object
+      description: author with first and last name
+      required:
+        - id
+        - firstname
+        - lastname
+      properties:
+        id:
+          type: number
+          format: int64
         firstname:
           type: string
         lastname:
@@ -105,6 +370,52 @@ components:
             self:
               $ref: '#/components/schemas/halLink'
 
+    blogList:
+      type: object
+      description: pageable list of blogs
+      required:
+        - _links
+        - _embedded
+      properties:
+        _embedded:
+          type: array
+          description: current page of list of found blogs
+          items:
+            $ref: '#/components/schemas/blog'
+        _links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              $ref: '#/components/schemas/halLink'
+            next:
+              $ref: '#/components/schemas/halLink'
+            previous:
+              $ref: '#/components/schemas/halLink'
+
+    blog:
+      type: object
+      description: blog with title and text
+      required:
+        - id
+        - title
+        - text
+      properties:
+        id:
+          type: number
+          format: int64
+        title:
+          type: string
+        text:
+          type: string
+        _links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              $ref: '#/components/schemas/halLink'
 
     halLink:
       type: object

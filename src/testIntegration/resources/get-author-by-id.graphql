@@ -1,0 +1,8 @@
+{
+    getAuthorById(id: 1){
+        id
+        firstName
+        lastName
+    }
+}
+
