@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    testCompile 'com.graphql-java:graphql-spring-boot-starter-test:5.0.2'
     compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '5.0.2'
     compile group: 'com.graphql-java', name: 'graphql-java-tools', version: '5.2.4'
     compile group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: '5.0.2'

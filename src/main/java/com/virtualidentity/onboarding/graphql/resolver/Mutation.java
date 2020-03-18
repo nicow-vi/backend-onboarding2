@@ -13,10 +13,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class Mutation implements GraphQLMutationResolver {
 
-  @Autowired
   private AuthorRepository authorRepository;
-  @Autowired
   private BlogRepository blogRepository;
+
+  @Autowired
+  public Mutation(AuthorRepository authorRepository, BlogRepository blogRepository) {
+    this.authorRepository = authorRepository;
+    this.blogRepository = blogRepository;
+  }
 
   public Author createAuthor(String firstName, String lastName) {
     Author author = new Author(firstName, lastName);

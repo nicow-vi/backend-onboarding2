@@ -11,11 +11,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class Query implements GraphQLQueryResolver {
 
-  @Autowired
+
   private AuthorRepository authorRepository;
-  @Autowired
+
   private BlogRepository blogRepository;
 
+  @Autowired
+  public Query(AuthorRepository authorRepository, BlogRepository blogRepository) {
+    this.authorRepository = authorRepository;
+    this.blogRepository = blogRepository;
+  }
 
   public Iterable<Author> getAllAuthors() {
     return authorRepository.findAll();
@@ -26,7 +31,7 @@ public class Query implements GraphQLQueryResolver {
   }
 
   public Author getAuthorById(Long id) {
-    return authorRepository.findById(id).get();
+    return authorRepository.findById(id).orElse(null);
   }
 
   public Blog getBlogById(Long id) {

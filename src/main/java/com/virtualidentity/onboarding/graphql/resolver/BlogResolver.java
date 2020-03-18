@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class BlogResolver implements GraphQLResolver<Blog> {
 
   @Autowired
-  AuthorRepository authorRepository;
+  private AuthorRepository authorRepository;
 
   public Author getAuthor(Blog blog) {
     Author author = authorRepository.findById(blog.getAuthorId()).get();
